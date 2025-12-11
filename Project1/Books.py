@@ -86,19 +86,6 @@ async def read_author_category_by_query(author: str = None, category: str = None
     if not books_to_return:
         raise HTTPException(status_code=404, detail="No books found")
     return books_to_return
-
-
-
-
-
-
-
-
-
-
-
-
-
 # @app.get("/books/{book_title}")
 # async def read_book(book_title: str):
 #     for book in Books:
