@@ -18,7 +18,7 @@ from sqlalchemy.ext.declarative import declarative_base
 #   - sqlite:// = SQLite database protocol
 #   - ./ = current directory
 #   - todos.db = database file name
-SQLALCHEMY_DATABASE_URL = "sqlite:///./todos.db"
+SQLALCHEMY_DATABASE_URL = "sqlite:///./todosapp.db"
 
 # Create the database engine
 # The engine is the core interface to the database, handling connection pooling
