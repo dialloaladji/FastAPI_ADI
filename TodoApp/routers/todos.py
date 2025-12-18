@@ -21,8 +21,6 @@ from Models import Todo
 # Import authentication dependency
 from routers.auth import get_current_user
 
-from routers.auth import get_current_user
-
 
 
 # Initialize the FastAPI application instance

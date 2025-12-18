@@ -34,6 +34,7 @@ class CreateUserRequest(BaseModel):
     last_name: str
     password: str
     role: str
+    phone_number: str
 
 
 
@@ -86,7 +87,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate credentials")
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED, summary="Create User", response_description="User created successfully")
 async def create_user(create_user_request: CreateUserRequest, db: db_dependency):
     user_model = Users(
         email=create_user_request.email,
@@ -95,6 +96,7 @@ async def create_user(create_user_request: CreateUserRequest, db: db_dependency)
         last_name=create_user_request.last_name,
         hashed_password=bcrypt_context.hash(create_user_request.password),
         role=create_user_request.role,
+        phone_number=create_user_request.phone_number,
         is_active=True
     )
     db.add(user_model)
@@ -103,12 +105,17 @@ async def create_user(create_user_request: CreateUserRequest, db: db_dependency)
     return {"id": user_model.id, "email": user_model.email, "username": user_model.username, "hashed_password": user_model.hashed_password}
 
 
-@router.post("/token")
+@router.post("/token", summary="Login for access token", response_description="Access token generated successfully")
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
-    user = db.query(Users).filter(Users.username == form_data.username).first()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    if not bcrypt_context.verify(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    access_token = create_access_token(user.username, user.id)
-    return {"access_token": access_token, "token_type": "bearer"}
+    try:
+        user = db.query(Users).filter(Users.username == form_data.username).first()
+        if not user:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        if not bcrypt_context.verify(form_data.password, user.hashed_password):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        access_token = create_access_token(user.username, user.id)
+        return {"access_token": access_token, "token_type": "bearer"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Internal server error: {str(e)}")

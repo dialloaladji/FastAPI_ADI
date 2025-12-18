@@ -10,23 +10,24 @@ and base class for ORM models.
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+# Import environment variable handling
+import os
+from dotenv import load_dotenv
 
+# Load environment variables from .env file
+load_dotenv()
 
 # Database connection URL
-# Using SQLite database stored in a file named "todos.db" in the current directory
-# Format: "sqlite:///./todos.db" means:
-#   - sqlite:// = SQLite database protocol
-#   - ./ = current directory
-#   - todos.db = database file name
-SQLALCHEMY_DATABASE_URL = "sqlite:///./todosapp.db"
+# Using PostgreSQL database
+# Reads from environment variable first (for security), falls back to PostgreSQL connection
+# Format: "postgresql://username:password@host:port/database_name"
+# To use environment variable: Create a .env file with: DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:11121990@localhost:5432/TodoApplicationDatabase")
 
 # Create the database engine
 # The engine is the core interface to the database, handling connection pooling
-# and SQL execution. connect_args={"check_same_thread": False} is required for
-# SQLite to allow connections from multiple threads (needed for FastAPI)
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
-)
+# and SQL execution. PostgreSQL supports multi-threaded connections by default.
+engine = create_engine(DATABASE_URL)
 
 # Create a session factory
 # SessionLocal is a factory that creates database sessions. Each session represents

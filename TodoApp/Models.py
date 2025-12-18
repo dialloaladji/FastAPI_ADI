@@ -22,6 +22,7 @@ class Users(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
     role = Column(String)
+    phone_number = Column(String(20))
 
 class Todo(Base):
     """
@@ -53,8 +54,6 @@ class Todo(Base):
     complete = Column(Boolean, default=False)
     
     # Foreign key to the users table - links todo to its owner
-    owner_id = Column(Integer, ForeignKey("users.id"))
-
     owner_id = Column(Integer, ForeignKey("users.id"))
 
     

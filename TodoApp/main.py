@@ -8,7 +8,8 @@ It defines all API endpoints (routes) and handles HTTP requests/responses.
 from fastapi import FastAPI
 # Import database configuration components
 from database import engine, Base
-from routers import auth, todos, admin
+from routers import auth, admin, todos
+from routers import Users
 
 
 # Initialize the FastAPI application instance
@@ -23,4 +24,5 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth.router)
 app.include_router(todos.router)
 app.include_router(admin.router)
+app.include_router(Users.router)
 
