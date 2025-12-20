@@ -54,13 +54,13 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 
 @router.get("/todos", status_code=status.HTTP_200_OK)
 async def get_todos(user: user_dependency, db: db_dependency):
-    if user is None or user["role"] != "admin":
+    if user is None or user["role"] != "Admin":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
     return db.query(Todo).all()
 
 @router.delete("/todos/{todo_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_todo(user: user_dependency, db: db_dependency, todo_id: int = Path(gt=0, description="The ID of the todo to delete")):
-    if user is None or user["role"] != "admin":
+    if user is None or user["role"] != "Admin":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
 
     todo_model = db.query(Todo).filter(Todo.id == todo_id).first()

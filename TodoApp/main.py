@@ -21,6 +21,15 @@ app = FastAPI(title="📝 Todo App API")
 # tables in the database if they don't already exist.
 # Import Models is necessary to ensure the Todo model is registered with Base
 Base.metadata.create_all(bind=engine)
+
+
+@app.get("/healthly")
+async def health_check():
+    return {"status": "healthy"}
+
+
+
+
 app.include_router(auth.router)
 app.include_router(todos.router)
 app.include_router(admin.router)
